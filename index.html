@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05060f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Pixel Invaders</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="game"></canvas>
+
+<!-- Botões visíveis durante a partida -->
+<div id="botoes-jogo" class="oculto">
+  <button id="btn-pausa" type="button" aria-label="Pausar">❚❚</button>
+  <button id="btn-tela-cheia" type="button" aria-label="Tela cheia">⛶</button>
+</div>
+
+<!-- Telas de menu (HTML por cima do canvas) -->
+<main id="ui">
+
+  <section id="tela-inicio" class="tela">
+    <h1 class="titulo">PIXEL INVADERS</h1>
+    <p class="sub">10 fases · 2 chefes · salve seu progresso</p>
+    <div class="acoes">
+      <button class="btn grande" id="btn-google" type="button" data-acao="google">Entrar com Google</button>
+      <button class="btn" id="btn-convidado" type="button" data-acao="convidado">Jogar como convidado</button>
+    </div>
+    <p id="msg-login" class="msg" role="status"></p>
+    <p class="nota">
+      Entre com seu e-mail da escola (<span id="txt-dominio"></span>) para salvar o progresso na nuvem e continuar de onde parou em qualquer aparelho.
+      Como convidado, o progresso fica salvo só neste aparelho.
+    </p>
+  </section>
+
+  <section id="tela-fases" class="tela oculto">
+    <header class="topo">
+      <div id="chip-jogador" class="chip"></div>
+      <button class="btn pequeno" type="button" data-acao="sair">Sair</button>
+    </header>
+    <h2>ESCOLHA A FASE</h2>
+    <div id="grade-fases"></div>
+    <p id="resumo" class="msg"></p>
+    <p id="aviso-convidado" class="nota oculto">Modo convidado: o progresso fica salvo só neste aparelho.</p>
+  </section>
+
+  <section id="tela-pausa" class="tela oculto">
+    <h2 class="grande">PAUSADO</h2>
+    <div class="acoes">
+      <button class="btn grande" type="button" data-acao="continuar">Continuar</button>
+      <button class="btn" type="button" data-acao="repetir">Reiniciar fase</button>
+      <button class="btn" type="button" data-acao="fases">Escolher fase</button>
+    </div>
+  </section>
+
+  <section id="tela-vitoria" class="tela oculto">
+    <h2 class="grande verde" id="vit-titulo">FASE CONCLUÍDA!</h2>
+    <p class="estrelas-grandes" id="vit-estrelas"></p>
+    <p class="placar" id="vit-pontos"></p>
+    <p class="msg" id="vit-extra"></p>
+    <div class="acoes">
+      <button class="btn grande" id="btn-proxima" type="button" data-acao="proxima">Próxima fase</button>
+      <button class="btn" type="button" data-acao="repetir">Jogar de novo</button>
+      <button class="btn" type="button" data-acao="fases">Escolher fase</button>
+    </div>
+  </section>
+
+  <section id="tela-fim" class="tela oculto">
+    <h2 class="grande vermelho">GAME OVER</h2>
+    <p class="placar" id="fim-pontos"></p>
+    <p class="msg" id="fim-extra"></p>
+    <div class="acoes">
+      <button class="btn grande" type="button" data-acao="repetir">Repetir fase</button>
+      <button class="btn" type="button" data-acao="fases">Escolher fase</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Aviso para girar o aparelho (aparece só em celular na vertical) -->
+<div id="aviso-girar" role="alert">
+  <div class="icone-girar">⟳</div>
+  <p>Gire o aparelho para o modo paisagem</p>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<noscript><p style="position:fixed;inset:0;margin:0;padding:24px;background:#05060f;color:#fff;z-index:99">Este jogo precisa de JavaScript.</p></noscript>
+
+<script type="module" src="game.js"></script>
+</body>
+</html>

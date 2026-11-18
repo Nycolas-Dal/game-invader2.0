@@ -1,0 +1,69 @@
+rules_version = '2';
+
+// =====================================================================
+// Regras do Firestore para o Pixel Invaders
+//
+// 1) Troque "DOMINIO_DA_ESCOLA" pelo domínio do e-mail da escola.
+//    Os pontos precisam ser escapados com duas barras invertidas.
+//    Exemplo para escola.pr.gov.br:
+//        '.*@escola\\.pr\\.gov\\.br$'
+// 2) Cole este conteúdo em Firestore Database → Regras → Publicar.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Só entra quem está logado com e-mail verificado do domínio da escola.
+    function dominioOk() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.matches('.*@escola\\.pr\\.gov\\.br$');
+    }
+
+    // Uma fase: estrelas de 0 a 3 e pontuação dentro de um limite razoável.
+    function faseOk(f) {
+      return f is map
+        && f.keys().hasOnly(['estrelas', 'pontos'])
+        && f.estrelas is int && f.estrelas >= 0 && f.estrelas <= 3
+        && f.pontos is int && f.pontos >= 0 && f.pontos <= 1000000;
+    }
+
+    // Mapa de fases: só chaves "1" a "10", e cada fase presente precisa ser válida.
+    function fasesOk(m) {
+      return m is map
+        && m.keys().hasOnly(['1','2','3','4','5','6','7','8','9','10'])
+        && (!('1' in m)  || faseOk(m['1']))
+        && (!('2' in m)  || faseOk(m['2']))
+        && (!('3' in m)  || faseOk(m['3']))
+        && (!('4' in m)  || faseOk(m['4']))
+        && (!('5' in m)  || faseOk(m['5']))
+        && (!('6' in m)  || faseOk(m['6']))
+        && (!('7' in m)  || faseOk(m['7']))
+        && (!('8' in m)  || faseOk(m['8']))
+        && (!('9' in m)  || faseOk(m['9']))
+        && (!('10' in m) || faseOk(m['10']));
+    }
+
+    function dadosOk(d) {
+      return d.keys().hasOnly(['maiorFase', 'fases', 'recorde', 'atualizado'])
+        && d.maiorFase is int && d.maiorFase >= 1 && d.maiorFase <= 10
+        && d.recorde is int && d.recorde >= 0 && d.recorde <= 10000000
+        && fasesOk(d.fases)
+        && d.atualizado == request.time;
+    }
+
+    // Cada jogador lê e escreve somente o PRÓPRIO documento.
+    match /users/{uid} {
+      allow read: if dominioOk() && request.auth.uid == uid;
+      allow create, update: if dominioOk()
+                            && request.auth.uid == uid
+                            && dadosOk(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Todo o resto é negado.
+    match /{outro=**} {
+      allow read, write: if false;
+    }
+  }
+}
