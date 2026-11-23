@@ -17,7 +17,7 @@ import {
    ===================================================================== */
 const CFG = {
   vidasPorFase: 3,
-  velJogador: 300,         // px/s
+  velJogador: 3000,         // px/s
   aceleracao: 14,          // quanto maior, mais "seco" o movimento
   cooldownTiro: 0.17,      // segundos entre tiros
   velProjetil: 760,        // px/s
@@ -1372,3 +1372,4 @@ async function iniciarApp() {
 }
 
 iniciarApp();
+
